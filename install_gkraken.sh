@@ -14,9 +14,23 @@ sudo apt-get install -y pkg-config \
 
 cd ~/Developer/Git
 
-if [ -d "gkraken" ]; then
-  # Control will enter here if $DIRECTORY exists.
-  cd gkraken
+if [ ! -d "gkraken" ]; then
+  # gkraken has not been cloned in this directory, clone it
+  git clone --recurse-submodules -j4 https://gitlab.com/leinardi/gkraken.git
+fi
+
+cd gkraken
+
+if ! command -v gkraken &> /dev/null
+then
+  # gkraken not installed, install it
+  git checkout release
+  sudo -H pip3 install -r requirements.txt
+  meson . build --prefix /usr
+  ninja -v -C build
+  sudo ninja -v -C build install
+else
+  # gkraken is installed, update it
   git fetch
   git checkout release
   git reset --hard origin/release
@@ -27,12 +41,4 @@ if [ -d "gkraken" ]; then
   ninja -v -C build
   sudo ninja -v -C build install
   sudo gkraken --add-udev-rule
-else
-  git clone --recurse-submodules -j4 https://gitlab.com/leinardi/gkraken.git
-  cd gkraken
-  git checkout release
-  sudo -H pip3 install -r requirements.txt
-  meson . build --prefix /usr
-  ninja -v -C build
-  sudo ninja -v -C build install
 fi
