@@ -2,4 +2,4 @@
 
 sudo add-apt-repository ppa:lutris-team/lutris
 sudo apt update
-sudo apt install lutris
+sudo apt install -y lutris
